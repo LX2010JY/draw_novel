@@ -44,7 +44,17 @@ def draw(url,headers,article_name):
         href = url+a.get('href')
         title = a.get_text()
         print('下载【'+article_name+'】中->'+title)
-        novel_dow(href,headers,title,article_name)
+        try:
+            novel_dow(href,headers,title,article_name)
+        except:
+            print('地址:'+href+" "+article_name+"下载失败!!!")
+            with(open('./novel/' + article_name + '.txt', 'a', encoding='utf-8')) as f:
+                f.write('\n\n' + title + ' 丢失了！！！\n')
+            with(open('./novel/error.txt', 'a', encoding='utf-8')) as f:
+                f.write(title + href + ' 丢失了！！！\n')
+
+        #finally:
+        #    print('next-->')
 
 def novel_dow(url,headers,title,article_name):
     '''
@@ -76,17 +86,17 @@ def novel_dow(url,headers,title,article_name):
 if __name__ == '__main__':
 
     # sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-    url = "http://www.00ksw.com/html/3/3133/"
-    # url = "http://www.00ksw.com/s_top/allvote.html"
+    # url = "http://www.00ksw.com/html/3/3133/"
+    url = "http://www.00ksw.com/s_top/allvote.html"
     headers = {
         'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.22 Safari/537.36 SE 2.X MetaSr 1.0',
     }
 
-    draw(url,headers,'斗破苍穹2')
-    # novels = order_page(url,headers)
-    # n=0
-    # for novel in novels:
-    #     t = threading.Thread(target=draw,args=(novel,headers,novels[novel]))
-    #     n = n+1
-    #     print('添加第{0}个线程'.format(n))
-    #     t.start()
+    # draw(url,headers,'斗破苍穹3')
+    novels = order_page(url,headers)
+    n=0
+    for novel in novels:
+        t = threading.Thread(target=draw,args=(novel,headers,novels[novel]))
+        n = n+1
+        print('添加第{0}个线程'.format(n))
+        t.start()
